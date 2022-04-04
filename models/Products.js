@@ -11,4 +11,24 @@ StoreManager.products WHERE id = ?`, [id]);
 return product;
 };
 
-module.exports = { getAll, getById };
+const create = async ({ name, quantity }) => {
+const [{ insertId }] = await connection.execute(`INSERT INTO 
+StoreManager.products (name, quantity) VALUES (?, ?)`, [name, quantity]);
+  return {
+      id: insertId,
+      name,
+      quantity,
+  };
+};
+
+const getByName = async ({ name }) => {
+  const query = `SELECT
+  * FROM StoreManager.products WHERE name = ?`;
+  // console.log(name);
+  const [productName] = await connection.execute(query, [name]);
+  // console.log('aqui', productName);
+  if (productName.length === 0) return null;
+  return productName;
+};
+
+module.exports = { getAll, getById, create, getByName };
