@@ -8,6 +8,8 @@ const getAll = async () => {
 const getById = async (id) => {
 const [product] = await connection.execute(`SELECT * FROM 
 StoreManager.products WHERE id = ?`, [id]);
+if (product.length === 0) return null;
+// console.log(product);
 return product;
 };
 
@@ -24,11 +26,18 @@ StoreManager.products (name, quantity) VALUES (?, ?)`, [name, quantity]);
 const getByName = async ({ name }) => {
   const query = `SELECT
   * FROM StoreManager.products WHERE name = ?`;
-  // console.log(name);
   const [productName] = await connection.execute(query, [name]);
   // console.log('aqui', productName);
   if (productName.length === 0) return null;
   return productName;
 };
 
-module.exports = { getAll, getById, create, getByName };
+const update = async (name, quantity, id) => {
+  const [productUpdate] = await connection.execute(`UPDATE 
+  StoreManager.products SET name = ?, quantity = ? WHERE id = ?`, [name, quantity, id]);
+  // console.log('passe no model', productUpdate);
+  if (productUpdate.length === 0) return null;
+  return { id, name, quantity };
+};
+
+module.exports = { getAll, getById, create, getByName, update };
