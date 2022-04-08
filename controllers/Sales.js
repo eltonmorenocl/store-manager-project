@@ -16,4 +16,13 @@ const getById = async (req, res) => {
     return res.status(200).json(saleId);
 };
 
-module.exports = { getAll, getById };
+const create = async (req, res) => {
+  try {
+    const sale = await salesServices.create(req.body);
+    return res.status(201).json(sale);
+  } catch (error) {
+    return res.status(409).json({ message: 'erro de servidor' });
+  }
+};
+
+module.exports = { getAll, getById, create };

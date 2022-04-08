@@ -34,4 +34,25 @@ ORDER BY productId;`,
 return sale;
 };
 
-module.exports = { getAll, getById };
+const create = async (productId, quantity) => {
+  const [{ insertId }] = await connection.execute(`INSERT INTO 
+  StoreManager.sales (date) VALUES (NOW())`);
+  const [products] = [productId, quantity];
+  // console.log(products);
+  await (products.map((item) => {
+  connection.execute(`INSERT INTO 
+  StoreManager.sales_products (sale_id, product_id, quantity) 
+  VALUES (?, ?, ?)`, [insertId, item.productId, item.quantity]);
+  
+  // console.log(products);
+  // console.log(item);
+  return products;
+  }));
+
+  return {
+    id: insertId,
+    itemsSold: [...products],
+  }; 
+};
+  
+module.exports = { getAll, getById, create };
