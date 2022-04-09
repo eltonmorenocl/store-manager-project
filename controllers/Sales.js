@@ -25,4 +25,16 @@ const create = async (req, res) => {
   }
 };
 
-module.exports = { getAll, getById, create };
+const update = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const [{ productId, quantity }] = req.body;
+    // console.log('controller', id, productId, quantity);
+    const updateSale = await salesServices.update(id, productId, quantity);
+    return res.status(200).json(updateSale);
+  } catch (error) {
+    return res.status(404).json({ message: 'Error Servidor' });
+  } 
+};
+
+module.exports = { getAll, getById, create, update };
