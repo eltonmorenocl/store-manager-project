@@ -23,4 +23,13 @@ const update = async (id, productId, quantity) => {
   return saleUpdate;
 };
 
-module.exports = { getAll, getById, create, update };
+const deleteSale = async (id) => {
+  const saleId = await salesModel.getById(id);
+  // console.log('saled service', saleId);
+  if (!saleId.length) return { message: 'Sale not found' };
+  
+  await salesModel.deleteSale(id);
+  return {};
+};
+
+module.exports = { getAll, getById, create, update, deleteSale };

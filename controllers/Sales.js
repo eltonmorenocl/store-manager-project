@@ -37,4 +37,16 @@ const update = async (req, res) => {
   } 
 };
 
-module.exports = { getAll, getById, create, update };
+const deleteSale = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const saleDeleteId = await salesServices.deleteSale(id);
+    // console.log('controller', saleDeleteId);
+    if (saleDeleteId.message) return res.status(404).json({ message: saleDeleteId.message });
+    return res.status(204).end();
+  } catch (error) {
+    return res.status(404).json({ message: 'Sale not found servidor erro' });
+  } 
+};
+
+module.exports = { getAll, getById, create, update, deleteSale };
