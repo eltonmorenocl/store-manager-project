@@ -13,9 +13,14 @@ const getById = async (id) => {
   return saleId;
 };
 
-const create = async (sale) => {
-  const saleCreated = await salesModel.create(sale);  
-  return saleCreated;
+const create = async (sales) => {
+  const saleCreated = await salesModel.createSale(sales);
+  // console.log('saleCreated service', saleCreated);  
+  await Promise.all(sales.map(async (sale) => {
+    await salesModel.create(saleCreated.insertId, sale.productId, sale.quantity);
+  }));
+ 
+  return { id: saleCreated.insertId, itemsSold: sales };
 };
 
 const update = async (id, productId, quantity) => {
