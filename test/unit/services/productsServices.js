@@ -23,14 +23,24 @@ describe("Produtcs Services", () => {
       "quantity": 30
     }
   ]
+
+  const fakeCreate = {
+    name: 'Martelo de Thor',
+    quantity: 200
+  };
+
   before(() => {
     sinon.stub(productsModel,'getAll').resolves(fakeProdutcs);
     sinon.stub(productsModel,'getById').resolves(object);
+    sinon.stub(productsModel, 'getByName').resolves();
+    sinon.stub(productsModel, 'create').resolves(fakeCreate);
   });
   
   after(() => {
     productsModel.getAll.restore();
     productsModel.getById.restore();
+    productsModel.create.restore();
+    productsModel.getByName.restore();
 
   });
 
@@ -50,6 +60,13 @@ describe("Produtcs Services", () => {
     const result = await productsServices.getById(true)
   
     expect(result.message).to.be.equals('Product not found');
+  })
+
+  it('Testa se função create é chamada', async () => {
+   const result = await productsServices.create(fakeCreate);
+
+    expect(result).to.be.an('object');
+    
   })
 
 });

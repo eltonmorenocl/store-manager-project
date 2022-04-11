@@ -18,14 +18,26 @@ describe("Sales Services", () => {
       "quantity": 20
     }
   ]
+  const fakeUpdatedSale = {
+    saleId: 1,
+    itemUpdated: [
+      {
+        productId: 1,
+        quantity: 6
+      }
+    ]
+
+  };
   before(() => {
     sinon.stub(salesModel,'getAll').resolves(fakeSales);
     sinon.stub(salesModel,'getById').resolves(object);
+    sinon.stub(salesModel, 'update').resolves(fakeUpdatedSale);
   });
   
   after(() => {
     salesModel.getAll.restore();
     salesModel.getById.restore();
+    salesModel.update.restore();
 
   });
 
@@ -45,6 +57,22 @@ describe("Sales Services", () => {
     const result = await salesServices.getById(true)
   
     expect(result.message).to.be.equals('Sale not found');
+  })
+
+  it('Testa se retorna um objeto com as propriedades saleId" and "itemUpdated"', async () => {
+    const saleId = 1;
+    const salesProducts = [
+      {
+        productId: 1,
+        quantity: 6
+      }
+    ];
+
+    const result = await salesServices.update(saleId, salesProducts);
+
+    expect(result).to.be.an('object');
+    expect(result).to.have.property('saleId', saleId);
+    expect(result).to.have.deep.property('itemUpdated', salesProducts);
   })
 
 });
