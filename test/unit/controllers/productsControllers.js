@@ -22,6 +22,12 @@ describe("Produtcs Controllers", () => {
     }
   ]
 
+  const fakeCreate = {
+    id: 2,
+    name: 'Traje de encolhimento',
+    quantity: 200
+  };
+
   const response = {};
   const request = {};
 
@@ -33,11 +39,13 @@ describe("Produtcs Controllers", () => {
 
     sinon.stub(productsServices,'getAll').resolves(fakeProdutcs);
     sinon.stub(productsControllers,'getById').resolves();
+    sinon.stub(productsServices,'create').resolves({ product: fakeCreate});
   });
   
   after(() => {
     productsServices.getAll.restore();
     productsControllers.getById.restore();
+    productsServices.create.restore();
 
   });
 
@@ -53,5 +61,11 @@ describe("Produtcs Controllers", () => {
   
     expect(response.status.calledWith(200)).to.be.equal(true)
     expect(response.json.calledWith(fakeProdutcs[0])).to.be.equal(false)
+  })
+
+  it('Testa se função Create retorna status', async () => {
+    await productsControllers.create(request, response)
+    
+    expect(response.status.calledWith(201)).to.be.equal(true)
   })
 });

@@ -17,6 +17,13 @@ describe("Sales Controllers", () => {
     }
   ]
 
+  const fakeCreate =   [
+    {
+      "productId": 1,
+      "quantity": 3
+    }
+  ]
+
   const response = {};
   const request = {};
 
@@ -28,11 +35,13 @@ describe("Sales Controllers", () => {
 
     sinon.stub(salesServices,'getAll').resolves(fakeSales);
     sinon.stub(salesControllers,'getById').resolves();
+    sinon.stub(salesServices,'create').resolves(fakeCreate);
   });
   
   after(() => {
     salesServices.getAll.restore();
     salesControllers.getById.restore();
+    salesServices.create.restore();
 
   });
 
@@ -50,5 +59,10 @@ describe("Sales Controllers", () => {
     expect(response.json.calledWith(fakeSales[0])).to.be.equal(false)
   })
   
+  it('Testa se função Create retorna status', async () => {
+    await salesControllers.create(request, response)
+    
+    expect(response.status.calledWith(201)).to.be.equal(true)
+  })
 
 });
