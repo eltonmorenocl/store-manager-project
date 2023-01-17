@@ -30,14 +30,12 @@ sp.sale_id = s.id
 WHERE sale_id = ?
 ORDER BY productId;`,
 [id]);
-
 return sale;
 };
 
 const createSale = async () => {
   const [results] = await connection.execute(`INSERT INTO 
   StoreManager.sales (date) VALUES (NOW())`);
-  console.log('model results createSale', results);
   return results;
 };
 
@@ -45,7 +43,6 @@ const create = async (insertId, productId, quantity) => {
   const [sale] = await connection.execute(`INSERT INTO 
     StoreManager.sales_products (sale_id, product_id, quantity) 
     VALUES (?, ?, ?)`, [insertId, productId, quantity]);
-  // console.log('model sale', sale);
     return sale;
   };
 
@@ -67,7 +64,7 @@ const deleteSale = async (id) => {
   await connection.execute(`DELETE FROM 
   StoreManager.sales WHERE id = ?`, [id]);
   
-  await connection.execute(`DELETE 
+  await connection.execute(`DELETE
   FROM StoreManager.sales_products WHERE sale_id = ?`, [id]);
 };
 

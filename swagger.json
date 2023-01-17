@@ -1,0 +1,433 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "Store Manager Project",
+    "description": "Foi desenvolvido uma API de um CRUD (Create, Read, Update e Delete) de um sistema de gerenciamento de vendas, onde será possível criar, visualizar, deletar e atualizar produtos e vendas.",
+    "contact": {
+      "name": "Elton Moreno",
+      "email": "eltonmorenocl@gmail.com"
+    },
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "https://localhost:3000",
+      "description": "API server"
+    }
+  ],
+  "paths": {
+    "/products": {  
+      "get": {
+        "summary": "endpoint GET /products",
+        "description": "O endpoint para listar produtos cadastrados, retorno com código 200",
+        "tags": ["Products"],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "example": [
+                    {
+                      "id": 1,
+                      "name": "produto A",
+                      "quantity": 10
+                    },
+                    {
+                      "id": 2,
+                      "name": "produto B",
+                      "quantity": 20
+                    }
+                ]
+              }
+            }
+          }
+        }
+      },
+      "post":{
+        "summary": "endpoint POST /products",
+        "description": "O endpoint deve ser capaz de adicionar os produtos enviados para a tabela products do Banco de Dados",
+        "tags": ["Products"],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Products"
+              },
+              "example":   { "name": "produto", "quantity": 10 }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "example":
+                  { "id": 1, "name": "produto", "quantity": 10 }         
+              }
+            }
+          },
+          "409": {
+            "description": "Validação dos campos informados",
+            "content": {
+              "application/json": {
+                "example": [
+                  {
+                  "description": "requisição feita com o atributo name igual um já cadastrado",
+                  "message": "Product already exists"
+                }
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    "/products/{id}": {
+      "get":{
+        "summary": "endpoint GET /products/:id",
+        "description": "O endpoint através do caminho /products/:id, apenas o produto com o id presente na URL deve ser retornado",
+        "tags": ["Products"],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "example": [
+                  {
+                    "id": 1,
+                    "name": "produto A",
+                    "quantity": 10
+                  }
+                ]
+              }
+            }
+          },
+          "404": {
+            "description": "Product not found"
+          }
+        }
+      },
+      "put":{
+        "summary": "endpoint PUT /products/:id",
+        "description": "O endpoint deve ser capaz de editar apenas o produto com o id presente na URL",
+        "tags": ["Products"],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID",
+            "required": true
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Products"
+              },
+              "example":   { "name": "produto", "quantity": 15 }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "example": [
+                  { "id": 1, "name": "produto", "quantity": 15 }
+                ]
+              }
+            }
+          },
+          "404": {
+            "description": "Product not found"
+          }
+        }
+      },
+      "delete":{
+        "summary": "endpoint DELETE /products/:id",
+        "description": "O endpoint deve deletar apenas o produto com o id presente na URL",
+        "tags": ["Products"],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID",
+            "required": true
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "example": [
+                  { }
+                ]
+              }
+            }
+          },
+          "404": {
+            "description": "Será validado que não é possível deletar um produto que não existe",
+            "content": {
+              "application/json": {
+                "example": [
+                  {
+                    "description": "um produto que não existe",
+                    "message": "Product not found"
+                  }
+                ]
+              }
+            }
+          }
+        }
+      }   
+    },
+    "/sales": {
+      "get": {
+        "summary": "endpoint GET /sales",
+        "description": "O endpoint para listar todas as vendas cadastrados, retorno com código 200",
+        "tags": ["Sales"],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "example": [
+                  {
+                    "saleId": 1,
+                    "date": "2023-01-17T22:13:43.000Z",
+                    "productId": 1,
+                    "quantity": 5
+                  },
+                  {
+                    "saleId": 1,
+                    "date": "2023-01-17T22:13:43.000Z",
+                    "productId": 2,
+                    "quantity": 10
+                  },
+                  {
+                    "saleId": 2,
+                    "date": "2023-01-17T22:13:43.000Z",
+                    "productId": 3,
+                    "quantity": 15
+                  }
+                ]
+              }
+            }
+          }
+        }
+      },
+      "post":{
+        "summary": "endpoint POST /sales",
+        "description": "O endpoint deve criar vendas e ser salvas na tabela sales e sales_products do Banco de dados, Deve ser possível cadastrar a venda de vários produtos através da uma mesma requisição",
+        "tags": ["Sales"],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Sales"
+              },
+              "example":   {
+                "productId": 1,
+                "quantity": 3
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "example":
+                {
+                  "id": 1,
+                  "itemsSold": [
+                    {
+                      "productId": 1,
+                      "quantity": 3
+                    }
+                  ]
+                }         
+              }
+            }
+          },
+          "400": {
+            "description": "Validação dos campos informados",
+            "content": {
+              "application/json": {
+                "example": [
+                  {
+                  "description": "Quando a requisição é feita sem o atributo productId",
+                  "message": "\"productId\" is required"
+                }
+                ]
+              }
+            }
+          }
+        }
+      }  
+    },
+    "/sales/{id}": {
+      "get":{
+        "summary": "endpoint GET /sales/:id",
+        "description": "O endpoint através do caminho /sales/:id, apenas a venda com o id presente na URL deve ser retornado",
+        "tags": ["Sales"],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "example": [
+                  {
+                    "date": "2023-01-17T22:13:43.000Z",
+                    "productId": 3,
+                    "quantity": 15
+                  }
+                ]
+              }
+            }
+          },
+          "404": {
+            "description": "Sale not found"
+          }
+        }
+      },
+      "put":{
+        "summary": "endpoint PUT /sales/:id",
+        "description": "O endpoint deve ser capaz de editar apenas a venda com o id presente na URL",
+        "tags": ["Sales"],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID",
+            "required": true
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Sales"
+              },
+              "example":   {
+                 "productId": 1,
+                 "quantity": 6
+               }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "example": [
+                  {
+                    "saleId": 1,
+                    "itemUpdated": [
+                      {
+                        "productId": 1,
+                        "quantity": 6
+                      }
+                    ]
+                  }
+                ]
+              }
+            }
+          },
+          "404": {
+            "description": "Sale not found"
+          }
+        }
+      },
+      "delete":{
+        "summary": "endpoint DELETE /sales/:id",
+        "description": "O endpoint deve deletar apenas a venda com o id presente na URL",
+        "tags": ["Sales"],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID",
+            "required": true
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "example": [
+                  { }
+                ]
+              }
+            }
+          },
+          "404": {
+            "description": "Será validado que não é possível deletar uma venda que não existe",
+            "content": {
+              "application/json": {
+                "example": [
+                  {
+                    "description": "uma venda que não existe",
+                    "message": "sale not found"
+                  }
+                ]
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+"components": {
+  "schemas": {
+    "Products": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "quantity": {
+          "type": "number"
+        }
+      }
+    },
+    "Sales": {
+      "type": "object",
+      "properties": {
+        "date": {
+          "type": "date"
+        },
+        "productId": {
+          "type": "string"
+        },
+        "quantity": {
+          "type": "number"
+        }
+      }
+    }
+  }
+}
+}

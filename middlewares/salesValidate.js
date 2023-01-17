@@ -1,5 +1,6 @@
+const productsModel = require('../models/Products');
+
 const salesValidate = (req, res, next) => {
-  console.log(req.body, req.body[0]);
   if (!req.body[0].productId) {
     return res.status(400).json({ message: '"productId" is required' });
   }
@@ -14,6 +15,15 @@ const salesValidate = (req, res, next) => {
     next();
 };
 
+const quantitySaleStore = async (req, res, next) => {
+  const [getQuantProducts] = await productsModel.getById(req.body[0].productId);
+  if (req.body[0].quantity > getQuantProducts.quantity) {
+    return res.status(422).json({ message: 'Such amount is not permitted to sell' });
+  }
+  next();
+};
+
 module.exports = {
   salesValidate,
+  quantitySaleStore,
 };
